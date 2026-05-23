@@ -2,37 +2,35 @@
 
 Questo documento descrive Enterprise AI Triage dal punto di vista tecnico e operativo.
 
-Il progetto è piccolo di proposito. Non vuole dimostrare un algoritmo avanzato, ma un modo ordinato di gestire richieste operative e richieste legate all'AI dentro un contesto enterprise: classificazione, rischio, ownership, escalation, audit e controllo dei costi.
+Enterprise AI Triage è pensato per velocizzare il primo smistamento dei ticket in un help desk strutturato. L'operatore inserisce le informazioni iniziali del case; il backend applica regole di triage per classificare la richiesta, stimare il rischio e indicare il team o il percorso operativo più adatto.
 
-L'idea di fondo è semplice: portare governance, mentalità operativa e controllo enterprise nell'adozione dell'AI. Prima di integrare un modello serve capire dove finisce il suggerimento automatico e dove iniziano responsabilità, revisione e processo.
+L'architettura separa l'inserimento del ticket dalla classificazione automatica. Questo permette di mantenere un processo tracciabile, con motivazione salvata, risk score controllato, provider identificabile e possibilità di cambiare motore LLM senza riscrivere il workflow operativo.
 
 ## Contesto del problema
 
-In molte aziende le richieste arrivano da canali diversi e con livelli di qualità molto variabili:
+In molte aziende le richieste arrivano da canali diversi e con livelli di dettaglio molto variabili:
 
 - incidenti di produzione
 - richieste di servizio
 - accessi e onboarding
 - rischi di sicurezza
-- idee di automazione con AI
+- proposte di automazione con AI
 - temi di governance, compliance o audit
 
-Il problema non è solo classificare il testo. Il problema vero è decidere rapidamente chi deve occuparsene, quanto è rischioso, quale azione va fatta dopo e se serve un passaggio di governance prima di procedere.
-
-Questo prototipo crea un livello comune di triage: ogni ticket viene validato, classificato, valutato, instradato, spiegato e salvato.
+Ogni ticket viene validato, classificato, valutato, indirizzato al team corretto e salvato con una motivazione leggibile. Il risultato aiuta il primo livello di supporto a ridurre il tempo di smistamento e a mantenere traccia delle decisioni prese.
 
 ## Principi di design
 
 Le scelte sono guidate da principi pratici:
 
-- l'AI supporta la decisione, non la prende da sola
-- le categorie e i team di escalation sono chiusi e controllati
+- l'AI supporta l'indirizzamento corretto del case e l'attivazione del percorso operativo più adatto
+- le categorie e i team di escalation sono controllati
 - il rischio è espresso con uno score semplice, da 1 a 5
 - la motivazione della classificazione viene salvata
 - il provider usato viene tracciato
-- il provider può essere sostituito senza riscrivere frontend e persistenza
+- il provider può essere sostituito senza riscrivere il workflow operativo
 - token e costi vanno trattati come metriche operative quando si useranno veri LLM
-- sicurezza e governance hanno precedenza rispetto alla semplice idea di automazione
+- sicurezza e governance hanno precedenza rispetto alla semplice automazione
 
 ## Architettura
 
@@ -117,7 +115,7 @@ Il risultato del triage contiene:
 - team di escalation
 - raccomandazione operativa
 - provider
-- rationale
+- motivazione
 
 Categorie supportate:
 
@@ -135,7 +133,7 @@ Team di escalation supportati:
 - `Business Owner`
 - `AI Governance`
 
-Questi enum sono una misura di controllo. Evitano che un output libero di un modello finisca direttamente nel routing operativo.
+Questi valori controllati evitano che un output libero o ambiguo finisca direttamente nel routing operativo.
 
 ## Flusso end-to-end
 
@@ -146,7 +144,7 @@ Questi enum sono una misura di controllo. Evitano che un output libero di un mod
 5. Il repository salva input originale e risultato del triage.
 6. La dashboard legge KPI e registro ticket.
 
-Il flusso è lineare, ma conserva le informazioni necessarie per capire dopo perché una richiesta è stata classificata e instradata in un certo modo.
+Il flusso è lineare e conserva le informazioni necessarie per capire in seguito perché una richiesta è stata classificata e indirizzata in un certo modo.
 
 ## Logica di classificazione
 
@@ -190,7 +188,7 @@ Il fallback è:
 Service Request
 ```
 
-L'ordine è importante. Se una richiesta dice che un assistente AI espone dati cliente, il primo problema è la sicurezza. Non va trattata come una normale idea di automazione.
+L'ordine è importante. Se una richiesta segnala che un assistente AI espone dati cliente, il sistema la indirizza prima verso una valutazione security e solo dopo, se opportuno, verso il percorso di automazione.
 
 ## Risk Score
 
@@ -215,7 +213,7 @@ Le categorie `Security Risk` e `Governance Issue` aggiungono un ulteriore `+1`.
 
 Il risultato viene limitato a `5`.
 
-Non è un modello quantitativo raffinato, e non pretende di esserlo. Serve a produrre un segnale comprensibile, stabile e utile per routing e dashboard.
+Lo score serve a produrre un segnale comprensibile, stabile e utile per routing e dashboard.
 
 ## Escalation
 
@@ -382,6 +380,6 @@ URL default:
 
 ## Lettura del progetto
 
-Il valore del progetto non è nella complessità del classificatore.
+Il valore del progetto è nel modo in cui il workflow tiene insieme automazione, help desk, security, governance, service delivery e impatto business.
 
-Il valore è nel modo in cui il workflow tiene insieme AI adoption, operations, security, governance, service delivery e impatto business. È una base piccola ma leggibile per discutere come introdurre AI in azienda senza perdere controllo operativo.
+È una base piccola ma leggibile per discutere come introdurre automazione AI dentro un processo operativo controllato.

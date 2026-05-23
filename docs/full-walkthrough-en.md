@@ -2,9 +2,9 @@
 
 This document explains the technical and operational reasoning behind Enterprise AI Triage.
 
-The project is intentionally small. It is designed to show how AI-related intake can be handled with enterprise controls: classification, risk scoring, escalation, audit context, provider abstraction, and cost awareness.
+Enterprise AI Triage is designed to speed up first-level ticket sorting inside a structured help desk. The operator enters the initial case information; the backend applies triage rules to classify the request, estimate risk, and indicate the right team or operational path.
 
-The important part is not a sophisticated model. The important part is the workflow around the model boundary.
+The architecture separates ticket entry from automated classification. That keeps the process traceable, stores the classification reason, keeps risk scoring controlled, records the provider, and allows the LLM engine to change without rewriting the operational workflow.
 
 ## Problem Context
 
@@ -17,22 +17,20 @@ Enterprise teams receive mixed requests through many channels:
 - AI automation ideas
 - governance and compliance questions
 
-Without a common intake layer, teams spend time deciding what the request is, who owns it, how risky it is, and whether governance review is required.
+With a common triage layer, each ticket can be classified, scored, routed to the right team, and stored with a readable reason.
 
-AI adoption makes this harder. A request may look like a business automation idea but also involve customer data, compliance exposure, or operational impact. The triage layer needs to notice those signals early.
-
-This prototype addresses that at a manageable scale: each ticket is validated, classified, scored, routed, explained, and persisted.
+This helps the help desk reduce time spent on first-level sorting while keeping a record of the decisions made.
 
 ## Design Principles
 
 The design follows a few practical rules:
 
-- AI supports a decision; it does not silently make the final operational decision.
-- Output is constrained to known categories and escalation teams.
+- AI supports correct case routing and helps trigger the right operational path.
+- Output is limited to known categories and escalation teams.
 - Risk scoring is bounded and easy to inspect.
-- The rationale is stored with the ticket.
+- The classification reason is stored with the ticket.
 - Provider identity is stored so decisions can be traced back to the source.
-- The provider is replaceable without changing the UI or database contract.
+- The provider is replaceable without changing the operational workflow.
 - Cost and token usage are treated as future operational metrics, not as an afterthought.
 - Security and governance signals are prioritized over generic automation signals.
 
@@ -119,7 +117,7 @@ The triage result contains:
 - escalation team
 - recommendation
 - provider
-- rationale
+- classification reason
 
 The constrained categories are:
 
@@ -137,7 +135,7 @@ The constrained escalation teams are:
 - `Business Owner`
 - `AI Governance`
 
-These enums matter. They prevent free-form model output from directly shaping operational routing.
+These controlled values prevent free-form or ambiguous model output from directly shaping operational routing.
 
 ## End-To-End Flow
 
@@ -194,7 +192,7 @@ The fallback category is:
 Service Request
 ```
 
-The order is not accidental. A phrase like "AI assistant exposes customer data vulnerability" should be handled as a security risk first. That is a safer enterprise default than routing it as a normal AI use case.
+The order is deliberate. If a ticket mentions an AI assistant exposing customer data, the system routes it toward security review before treating it as an automation proposal.
 
 ## Risk Scoring
 

@@ -1,13 +1,13 @@
 # AI Governance Approach
 
-This prototype treats AI triage as a governed decision-support workflow, not as an autonomous final decision maker.
+This prototype treats AI triage as part of a governed help desk workflow.
 
 ## Controls
 
-- Human-readable rationale is stored with each classification.
+- A human-readable classification reason is stored with each ticket.
 - Escalation remains explicit and reviewable.
 - Risk score is bounded from 1 to 5.
-- Provider output is mapped into strict application enums.
+- Provider output is mapped into controlled application values.
 - Mock provider avoids sending sensitive data to third-party systems during early evaluation.
 - Real LLM providers should log token usage, estimated cost, model, prompt version, and policy status.
 - Token budgets and rate limits should be enforced before production use.
@@ -27,9 +27,9 @@ Any future LLM adapter must return the same schema:
 - escalation
 - recommendation
 - provider
-- rationale
+- classification reason
 
-This keeps business workflow logic independent from the model vendor.
+This keeps the operational workflow independent from the model vendor.
 
 ## Cost Governance
 
