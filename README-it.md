@@ -24,7 +24,7 @@ Da questi dati il backend calcola automaticamente:
 - risk score da 1 a 5
 - team di escalation
 - raccomandazione operativa
-- rationale
+- motivazione
 - provider usato
 
 Categorie supportate:

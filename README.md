@@ -6,7 +6,7 @@ Enterprise AI Triage is a small web application designed to speed up work inside
 
 The project uses a clear, scalable architecture that can be adapted to different organizational needs. The workflow is designed with compliance, security, cost control, and operational ownership in mind from the start.
 
-The goal is to place automation inside a traceable operational process: the ticket is still written by a person, while category, risk score, escalation, recommendation, and rationale are produced by the backend in a consistent and reviewable way.
+The goal is to place automation inside a traceable operational process: the ticket is still written by a person, while category, risk score, escalation, recommendation, and classification reason are produced by the backend in a consistent and reviewable way.
 
 ## What It Does
 
@@ -18,7 +18,7 @@ From that input, the backend automatically returns:
 - risk score from 1 to 5
 - escalation team
 - operational recommendation
-- rationale
+- classification reason
 - provider name
 
 Supported categories:
@@ -41,7 +41,7 @@ The dashboard provides a compact operational view: total tickets, average risk, 
 
 ## What It Is For
 
-Each request is classified, scored, routed to the right team, and stored with a readable rationale. This helps the help desk reduce time spent on first-level sorting while keeping a record of the decisions made.
+Each request is classified, scored, routed to the right team, and stored with a readable classification reason. This helps the help desk reduce time spent on first-level sorting while keeping a record of the decisions made.
 
 ## Design Principles
 
